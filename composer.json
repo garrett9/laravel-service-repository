@@ -9,7 +9,7 @@
 	},
 	"autoload" : {
 		"psr-4" : {
-			"Garrett9\\LaravelServiceRepository" : "src/"
+			"Garrett9\\LaravelServiceRepository\\" : "src/"
 		}
 	},
 	"minimum-stability" : "dev",
