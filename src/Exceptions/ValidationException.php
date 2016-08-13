@@ -24,9 +24,9 @@ class ValidationException extends \Exception
      * @param number $code The exception's code.
      * @param \Exception $previous The exception's previous exception.
      */
-    public function __construct($message = 'Validation Exception!', array $errors = [], $code = 0, \Exception $previous = null)
+    public function __construct($message = 'Validation Exception!', array $errors = [])
     {
-        parent::__construct($code, $previous);
+        parent::__construct($message);
         $this->errors = $errors;
     }
     

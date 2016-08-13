@@ -1,6 +1,6 @@
 <?php 
 
-namespace Garrett9\LaravelServiceRepository;
+namespace Garrett9\LaravelServiceRepository\Contracts;
 
 /**
  * An interface to the Service class.

@@ -2,6 +2,7 @@
 namespace Garrett9\LaravelServiceRepository;
 
 use Garrett9\LaravelServiceRepository\Contracts\IRepository;
+use Garrett9\LaravelServiceRepository\Contracts\IService;
 
 /**
  * An abstract Service class to be extended by all others Services.
@@ -167,7 +168,7 @@ abstract class Service implements IService
      *
      * @see \Garrett9\LaravelServiceRepository\IService::find()
      */
-    public function find($id, $with)
+    public function find($id, array $with = [])
     {
         return $this->repository->find($id, $with);
     }
@@ -178,7 +179,7 @@ abstract class Service implements IService
      *
      * @see \Garrett9\LaravelServiceRepository\IService::lockForUpdate()
      */
-    public function lockForUpdate($id, $with)
+    public function lockForUpdate($id, array $with = [])
     {
         return $this->repository->lockForUpdate($id, $with);
     }
@@ -222,7 +223,7 @@ abstract class Service implements IService
      *
      * @see \Garrett9\LaravelServiceRepository\IService::directUpdate()
      */
-    public function directUpdate($id, $data)
+    public function directUpdate($id, array $data = [])
     {
         return $this->repository->directUpdate($id, $data);
     }

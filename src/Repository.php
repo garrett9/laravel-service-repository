@@ -7,7 +7,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Garrett9\LaravelServiceRepository\Exceptions\NotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Garrett9\LaravelServiceRepository\Exceptions\IntegrityConstraintViolationException;
-use Dotenv\Exception\ValidationException;
+use Garrett9\LaravelServiceRepository\Exceptions\ValidationException;
 
 /**
  * The base Repository class for all other repositories to extend.
@@ -347,7 +347,7 @@ abstract class Repository implements IRepository
                 return $model->getKey();
         } catch (\PDOException $e) {
             if ($e->getCode() == 23000)
-                throw new IntegrityConstraintViolationException($e->getMessage());
+                throw new IntegrityConstraintViolationException($e->getMessage(), $e->getCode(), $e);
             throw $e;
         }
         throw new ValidationException('Failed to create the new record!', $model->errors()->toArray());

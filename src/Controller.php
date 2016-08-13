@@ -3,9 +3,9 @@
 namespace Garrett9\LaravelServiceRepository;
 
 use Illuminate\Routing\Controller as BaseController;
-use Garrett9\LaravelServiceRepository\IService;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
+use Garrett9\LaravelServiceRepository\Contracts\IService;
 
 /**
  * The base controlelr instance for the class.
@@ -28,13 +28,6 @@ abstract class Controller extends BaseController
      * @var Request
      */
     protected $request;
-
-    /**
-     * The Guard instance for the controller.
-     * 
-     * @var Guard
-     */
-    protected $guard;
     
     /**
      * The constructor.
@@ -43,10 +36,9 @@ abstract class Controller extends BaseController
      * @param Request $request
      * @param Guard $guard
      */
-    public function __construct($service, $request, $guard)
+    public function __construct(IService $service, Request $request)
     {
         $this->service = $service;
         $this->request = $request;
-        $this->guard = $guard;
     }
 }
