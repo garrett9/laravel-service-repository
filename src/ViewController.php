@@ -17,13 +17,6 @@ abstract class ViewController extends Controller
 {
 
     /**
-     * The Response instance for the controller.
-     *
-     * @var ResponseFactory
-     */
-    protected $reponse_factory;
-
-    /**
      * The base path to the controller's views.
      *
      * @var string
@@ -32,16 +25,16 @@ abstract class ViewController extends Controller
 
     /**
      * The constructor.
-     *
-     * @param string $path
-     *            The base path to the controller's views.
-     * @param ResponseFactory $response            
+     * 
+     * @param IService $service
+     * @param Request $request
+     * @param ResponseFactory $response_factory
+     * @param unknown $path
      */
-    public function __construct(IService $service, Request $request, ResponseFactory $view_factory, $path = null)
+    public function __construct(IService $service, Request $request, ResponseFactory $response_factory, $path = null)
     {
-        parent::__construct($service, $request);
-        $this->path = is_null($path) ? '' : rtrim(str_replace('/', '.', $path), '.') . '.';
-        $this->reponse_factory = $view_factory;
+        parent::__construct($service, $request, $response_factory);
+        $this->path = (is_null($path) ? strtolower(snake_case(str_replace('Controller', '', class_basename($this)))) : rtrim(str_replace('/', '.', $path), '.'))  . '.';
     }
 
     /**
@@ -65,7 +58,7 @@ abstract class ViewController extends Controller
      */
     public function showView($id)
     {
-        return $this->view('show', [
+        return $this->view('view', [
             'model' => $this->service->find($id)
         ]);
     }
@@ -89,7 +82,7 @@ abstract class ViewController extends Controller
     {
         try {
             $id = $this->service->create($this->request->input());
-            return $this->redirectToAction(__CLASS__ . '@showView', [$id]);
+            return $this->redirectToAction(__CLASS__ . '@showView', [$id], ['created' => $id]);
         } catch (ValidationException $e) {
             $this->request->flash();
             return $this->view('create')->with('errors', $e->getErrors());
@@ -121,10 +114,22 @@ abstract class ViewController extends Controller
     {
         try {
             $this->service->update($id, $this->request->input());
-            return $this->showEdit($id);
+            return $this->showEdit($id, ['saved' => $id]);
         } catch (ValidationException $e) {
             return $this->view('edit')->with('errors', $e->getErrors());
         }
+    }
+    
+    /**
+     * Delete a record from the controller's service.
+     * 
+     * @param number $id The primary key value of the record to delete.
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $this->service->delete($id);
+        return $this->view('index', ['deleted' => $id]);
     }
 
     /**
@@ -138,7 +143,7 @@ abstract class ViewController extends Controller
      */
     protected function view($view, array $data = [])
     {
-        return $this->reponse_factory->view('desktop/' . $this->path . $view, $data);
+        return $this->response_factory->view('desktop/' . $this->path . $view, $data)->setStatusCode(400);
     }
 
     /**
@@ -150,7 +155,7 @@ abstract class ViewController extends Controller
      */
     protected function redirectTo($path, array $data = [])
     {
-        return $this->reponse_factory->redirectTo($path)->with($data);
+        return $this->response_factory->redirectTo($path)->with($data);
     }
 
     /**
@@ -164,7 +169,7 @@ abstract class ViewController extends Controller
      */
     protected function redirectToRoute($route, array $params = [], array $data = [])
     {
-        return $this->reponse_factory->redirectToRoute($route, $params)->with($data);
+        return $this->response_factory->redirectToRoute($route, $params)->with($data);
     }
 
     /**
@@ -178,6 +183,6 @@ abstract class ViewController extends Controller
      */
     protected function redirectToAction($action, array $params = [], array $data = [])
     {
-        return $this->reponse_factory->redirectToAction($action, $params)->with($data);
+        return $this->response_factory->redirectToAction($action, $params)->with($data);
     }
 }

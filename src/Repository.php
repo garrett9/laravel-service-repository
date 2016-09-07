@@ -319,7 +319,6 @@ abstract class Repository implements IRepository
         if (! is_null($closure))
             $closure($qry);
         $model = $qry->first();
-        
         if (! is_null($model))
             return $model;
         throw new NotFoundException();
