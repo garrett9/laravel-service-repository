@@ -39,4 +39,29 @@ class ValidationException extends \Exception
     {
         return $this->errors;
     }
+    
+    /**
+     * Returns the exceptions errors as a JSON encoded string.
+     *
+     * @param string $pretty_print True for pretty printing; False otherwise (default is false).
+     * @return string The JSON representation of the errors.
+     */
+    public function getErrorsInJson($pretty_print=false)
+    {
+        if($pretty_print)
+            return json_encode($this->errors, JSON_PRETTY_PRINT);
+            return json_encode($this->errors);
+    }
+    
+    /**
+     * (non-PHPdoc)
+     * @see Exception::__toString()
+     */
+    public function __toString()
+    {
+        $str = __CLASS__ . ': ' . $this->message;
+        if($this->errors)
+            $str .= "\n" . $this->getErrorsInJson(true);
+            return $str;
+    }
 }

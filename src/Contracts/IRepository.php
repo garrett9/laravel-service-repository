@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 interface IRepository
 {
+
     /**
      * Count the number of records in the repository.
      *
@@ -21,6 +22,20 @@ interface IRepository
      * @return number The number of records found.
      */
     public function count(array $where = []);
+    
+    /**
+     * Count the number of records using a particular WHERE statement.
+     * 
+     * @param string $column
+     *            The column to perform the WHERE statement on.
+     * @param string $operator
+     *            The operator for the WHERE statement.
+     * @param mixed $value
+     *            The value for the WHERE statement.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     */
+    public function countWhere($column, $operator, $value, array $where = []);
 
     /**
      * Find the minimum value for a given column.
@@ -70,7 +85,7 @@ interface IRepository
      * Increment a given column's value for a record by an amount.
      *
      * @param number $id
-     *            The primary key of the record to increment a column's value for.   
+     *            The primary key of the record to increment a column's value for.
      * @param string $column
      *            The column of the record to increment.
      * @param number $amount
@@ -97,9 +112,134 @@ interface IRepository
      *            WHERE parameters to add to the query.
      * @param array $with
      *            The relationships to load with the retrieved records.
+     * @param number $limit
+     *            The number of results to limit to. If 0 or less than 0, all results will be returned.
      * @return \Illuminate\Database\Eloquent\Collection The retrieved records.
      */
-    public function get(array $where = [], array $with = []);
+    public function get(array $where = [], array $with = [], $limit = 0);
+
+    /**
+     * Return all records from the repository with a specific WHERE statement.
+     *
+     * @param string $column
+     *            The column to perform the WHERE statement on.
+     * @param string $operator
+     *            The operator for the WHERE statement.
+     * @param mixed $value
+     *            The value for the WHERE statement.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @param array $with
+     *            The relationships to load with the model.
+     * @param number $limit
+     *            The number of results to limit to. If 0 or less than 0, all results will be returned.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getWhere($column, $operator, $value, array $where = [], array $with = [], $limit = 0);
+
+    /**
+     * Count the number of records that were created for each day for the given number of months ago (assuming a 30 day month).
+     * This method is usefull for building client side charts/graphs.
+     *
+     * @param number $months
+     *            The number of previous months to count when counting the number of records per day.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function countCreatedPerDayForMonthsAgo($months = 1, array $where = []);
+
+    /**
+     * Count the number of records that were created for each day for the given number of weeks ago.
+     * This method is usefull for building client side charts/graphs.
+     *
+     * @param number $weeks
+     *            The number of previous weeks to count when counting the number of records per day.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function countCreatedPerDayForWeeksAgo($weeks = 1, array $where = []);
+
+    /**
+     * Count the number of records that were created for each day for the given number of days ago.
+     * This method is usefull for building client side charts/graphs.
+     *
+     * @param number $days
+     *            The number of previous days to count when counting the number of records per day.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function countCreatedPerDayForDaysAgo($days = 1, array $where = []);
+
+    /**
+     * Count the number of records that were created for each hour for the given number of hours ago.
+     * This method is usefull for buildign client side charts/graphs.
+     *
+     * @param number $hours
+     *            The number of previous hours to count when counting the number of records per hour.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function countCreatedPerHourForHoursAgo($hours = 1, array $where = []);
+
+    /**
+     * Sum a column's value for all records per day that were created for the given number of months ago (assuming a 30 day month).
+     * This method is usefull for building client side charts/graphs.
+     *
+     * @param string $column
+     *            The column to sum the values for.
+     * @param number $months
+     *            The number of previous months to count when counting the number of records per day.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function sumPerDayForMonthsAgo($column, $months = 1, array $where = []);
+
+    /**
+     * Sum a column's value for all records per day that were created for the given number of weeks ago.
+     * This method is usefull for building client side charts/graphs.
+     *
+     * @param string $column
+     *            The column to sum the values for.
+     * @param number $weeks
+     *            The number of previous weeks to count when counting the number of records per day.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function sumPerDayForWeeksAgo($column, $weeks = 1, array $where = []);
+
+    /**
+     * Sum a column's value for all records per day that were created for the given number of days ago.
+     * This method is usefull for building client side charts/graphs.
+     *
+     * @param string $column
+     *            The column to sum the values for.
+     * @param number $days
+     *            The number of previous days to count when counting the number of records per day.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function sumPerDayForDaysAgo($column, $days = 1, array $where = []);
+
+    /**
+     * Sum a column's value for all records per hour that were created for the given number of hours ago.
+     * This method is usefull for building client side charts/graphs.
+     *
+     * @param string $column
+     *            The column to sum the values for.
+     * @param number $hours
+     *            The number of previous hours to count when counting the number of records per hour.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function sumPerHourForHoursAgo($column, $hours = 1, array $where = []);
 
     /**
      * Return all records that has a column value in an array of given values.
@@ -131,16 +271,17 @@ interface IRepository
 
     /**
      * Perform a search on the given columns.
-     * 
+     *
      * @param array $whereLike
      *            An array of column names => search values.
      * @param array $where
      *            Extra WHERE parameters to add to the query.
      * @param array $with
      *            Extra relationships to load with the retrieved records.
+     * @param The number of results to limit the query to.
      * @return \Illuminate\Database\Eloquent\Collection The retrieved results.
      */
-    public function search(array $whereLike = [], array $where = [], array $with = []);
+    public function search(array $whereLike = [], array $where = [], array $with = [], $limit = 0);
 
     /**
      * Check if a record exists.
@@ -162,10 +303,10 @@ interface IRepository
      * @throws NotFoundException If the record was not found.
      */
     public function find($id, array $with = []);
-    
+
     /**
      * Retrieves, and locks a record for being updated.
-     * 
+     *
      * @param mixed $id
      *            Either the primary key of the record, or an array of WHERE parameters.
      * @param array $with
@@ -188,12 +329,13 @@ interface IRepository
     /**
      * Insert 1 or multiple records into the repository's database.
      * WARNING: This method does not utilize model validation, so be careful when using.
-     * 
-     * @param array $data The data to insert into the repository's database.
+     *
+     * @param array $data
+     *            The data to insert into the repository's database.
      * @return number How many records were created.
      */
     public function insert(array $data = []);
-    
+
     /**
      * Update a single record in the repository.
      *
@@ -229,8 +371,9 @@ interface IRepository
 
     /**
      * Delete all records in the repositoy's database.
-     * 
-     * @param array $where WHERE parameters to add to the query.
+     *
+     * @param array $where
+     *            WHERE parameters to add to the query.
      * @return number The number of records that were deleted.
      */
     public function clear(array $where = []);

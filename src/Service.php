@@ -40,6 +40,16 @@ abstract class Service implements IService
     {
         return $this->repository->count($where);
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::countWhere()
+     */
+    public function countWhere($column, $operator, $value, array $where = [])
+    {
+        return $this->repository->countWhere($column, $operator, $value, $where);
+    }
 
     /**
      *
@@ -113,11 +123,101 @@ abstract class Service implements IService
      *
      * @see \Garrett9\LaravelServiceRepository\IService::get()
      */
-    public function get(array $where = [], array $with = [])
+    public function get(array $where = [], array $with = [], $limit = 0)
     {
-        return $this->repository->get($where, $with);
+        return $this->repository->get($where, $with, $limit);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::getWhere()
+     */
+    public function getWhere($column, $operator, $value, array $where = [], array $with = [], $limit = 0)
+    {
+        return $this->repository->getWhere($column, $operator, $value, $where, $with, $limit);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::countCreatedPerDayForMonthsAgo()
+     */
+    public function countCreatedPerDayForMonthsAgo($months = 1, array $where = [], array $with = [])
+    {
+        return $this->repository->countCreatedPerDayForMonthsAgo($months, $where, $with);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::countCreatedPerDayForWeeksAgo()
+     */
+    public function countCreatedPerDayForWeeksAgo($weeks = 1, array $where = [])
+    {
+        return $this->repository->countCreatedPerDayForWeeksAgo($weeks, $where);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::countCreatedPerDayForDaysAgo()
+     */
+    public function countCreatedPerDayForDaysAgo($days = 1, array $where = [])
+    {
+        return $this->repository->countCreatedPerDayForDaysAgo($days, $where);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::countCreatedPerHourForHoursAgo()
+     */
+    public function countCreatedPerHourForHoursAgo($hours = 1, array $where = [])
+    {
+        return $this->repository->countCreatedPerHourForHoursAgo($hours, $where);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::sumPerDayForMonthsAgo()
+     */
+    public function sumPerDayForMonthsAgo($column, $months = 1, array $where = [])
+    {
+        return $this->repository->sumPerDayForMonthsAgo($column, $months, $where);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::sumPerDayForWeeksAgo()
+     */
+    public function sumPerDayForWeeksAgo($column, $weeks = 1, array $where = [])
+    {
+        return $this->repository->sumPerDayForWeeksAgo($column, $weeks, $where);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::sumPerDayForDaysAgo()
+     */
+    public function sumPerDayForDaysAgo($column, $days = 1, array $where = [])
+    {
+        return $this->repository->sumPerDayForDaysAgo($column, $days, $where);
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::sumPerHourForHoursAgo()
+     */
+    public function sumPerHourForHoursAgo($column, $days = 1, array $where = [])
+    {
+        return $this->repository->sumPerHourForHoursAgo($column, $days, $where);
+    }
+    
     /**
      *
      * {@inheritDoc}
@@ -146,9 +246,9 @@ abstract class Service implements IService
      *
      * @see \Garrett9\LaravelServiceRepository\IService::search()
      */
-    public function search(array $whereLike = [], array $where = [], array $with = [])
+    public function search(array $whereLike = [], array $where = [], array $with = [], $limit = 0)
     {
-        return $this->repository->search($whereLike, $where, $with);
+        return $this->repository->search($whereLike, $where, $with, $limit);
     }
 
     /**
