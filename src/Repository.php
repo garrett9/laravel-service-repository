@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Garrett9\LaravelServiceRepository\Exceptions\IntegrityConstraintViolationException;
 use Garrett9\LaravelServiceRepository\Exceptions\ValidationException;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -49,15 +48,18 @@ abstract class Repository implements IRepository
     {
         return $this->model->where($where)->count();
     }
-    
+
     /**
-     * 
+     *
      * {@inheritDoc}
+     *
      * @see \Garrett9\LaravelServiceRepository\Contracts\IRepository::countWhere()
      */
     public function countWhere($column, $operator, $value, array $where = [])
     {
-        return $this->model->where($column, $operator, $value)->where($where)->count();
+        return $this->model->where($column, $operator, $value)
+            ->where($where)
+            ->count();
     }
 
     /**
@@ -141,6 +143,30 @@ abstract class Repository implements IRepository
     public function get(array $where = [], array $with = [], $limit = 0)
     {
         return $this->buildGetQuery($where, $with, $limit)->get();
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     *
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IRepository::paginate()
+     */
+    public function paginate($per_page = 10, array $where = [], array $with = [], $order_by = null, $order_dir = 'asc')
+    {
+        return $this->buildGetQuery($where, $with, 0, $order_by, $order_dir)->paginate($per_page);
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     *
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IRepository::paginateWhere()
+     */
+    public function paginateWhere($column, $operator, $value, $per_page = 10, array $where = [], array $with = [], $order_by = null, $order_dir = 'asc')
+    {
+        return $this->buildGetQuery($where, $with, 0, $order_by, $order_dir)
+            ->where($column, $operator, $value)
+            ->paginate($per_page);
     }
 
     /**
@@ -390,15 +416,18 @@ abstract class Repository implements IRepository
      *
      * @see \Garrett9\LaravelServiceRepository\Contracts\IRepository::search()
      */
-    public function search(array $whereLike = [], array $where = [], array $with = [], $limit = 0)
+    public function search(array $whereLike = [], array $where = [], array $except = [], array $with = [], $limit = 0)
     {
         $qry = $this->buildGetQuery($where, $with);
         foreach ($whereLike as $column => $search) {
             if (! is_null($search))
                 $qry->where($column, 'like', '%' . $search . '%');
         }
-        if($limit > 0)
+        if ($limit > 0)
             $qry->take($limit);
+        
+        foreach ($except as $key => $value)
+            $qry->where($key, '<>', $value);
         return $qry->get();
     }
 
@@ -510,9 +539,12 @@ abstract class Repository implements IRepository
      *
      * @see \Garrett9\LaravelServiceRepository\Contracts\IRepository::clear()
      */
-    public function clear(array $where = [])
+    public function clear(array $where = [], array $except = [])
     {
-        return $this->model->where($where)->delete();
+        $qry = $this->model->where($where);
+        foreach ($except as $key => $value)
+            $qry->where($key, '<>', $value);
+        return $qry->delete();
     }
 
     /**
@@ -522,13 +554,19 @@ abstract class Repository implements IRepository
      *            WHERE parameters to add to the query.
      * @param array $with
      *            The relationships to load with the retrieved records.
+     * @param string $order_by
+     *            The column to order the results by.
+     * @param string $order_dir
+     *            The direction to order the results by.
      * @return QueryBuilder The QueryBuilder instance for performing the query.
      */
-    protected function buildGetQuery(array $where = [], array $with = [], $limit = 0)
+    protected function buildGetQuery(array $where = [], array $with = [], $limit = 0, $order_by = null, $order_dir = 'asc')
     {
         $qry = $this->model->where($where)->with($with);
         if ($limit > 0)
             $qry->take($limit);
+        if (! is_null($order_by))
+            $qry->orderBy($order_by, $order_dir);
         return $qry;
     }
 

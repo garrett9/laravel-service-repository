@@ -115,6 +115,46 @@ interface IService
     public function get(array $where = [], array $with = [], $limit = 0);
 
     /**
+     * Return a pagination instance when performing a query on the repository.
+     *
+     * @param number $per_page
+     *            The number of results to return per page.
+     * @param array $where
+     *            The WHERE parameters to perform for the query.
+     * @param array $with
+     *            The extra relationships to load with the query.
+     * @param string $order_by
+     *            The column to order the results by.
+     * @param string $order_dir
+     *            The direction to order the results by.
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function paginate($per_page = 10, array $where = [], array $with = [], $order_by = null, $order_dir = 'asc');
+    
+    /**
+     * Return a pagination instance when performing a specific query on the repository.
+     *
+     * @param string $column
+     *            A column to perform a specific query on.
+     * @param string $operator
+     *            The operator of the specific query.
+     * @param mixed $value
+     *            The value for the specific query.
+     * @param number $per_page
+     *            The number of results to return per page.
+     * @param array $where
+     *            The WHERE parameters to perform for the query.
+     * @param array $with
+     *            The extra relationships to load with the query.
+     * @param string $order_by
+     *            The column to order the results by.
+     * @param string $order_dir
+     *            The direction to order the results by.
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function paginateWhere($column, $operator, $value, $per_page = 10, array $where = [], array $with = [], $order_by = null, $order_dir = 'asc');
+
+    /**
      * Return all records from the repository with a specific WHERE statement.
      *
      * @param string $column
@@ -272,13 +312,15 @@ interface IService
      *            An array of column names => search values.
      * @param array $where
      *            Extra WHERE parameters to add to the query.
+     * @param array $except
+     *            WHERE pameters that shoudn't equal.
      * @param array $with
      *            Extra relationships to load with the retrieved records.
      * @param number $limit
      *            The number of results to limit the query to.
      * @return \Illuminate\Database\Eloquent\Collection The retrieved results.
      */
-    public function search(array $whereLike = [], array $where = [], array $with = [], $limit = 0);
+    public function search(array $whereLike = [], array $where = [], array $except = [], array $with = [], $limit = 0);
 
     /**
      * Check if a record exists.
@@ -371,7 +413,9 @@ interface IService
      *
      * @param array $where
      *            WHERE parameters to add to the query.
+     * @param array $except
+     *            WHERE parameters that should not equal.
      * @return number The number of records that were deleted.
      */
-    public function clear(array $where = []);
+    public function clear(array $where = [], array $except = []);
 }

@@ -37,11 +37,12 @@ abstract class ApiController extends Controller
     {
         return $this->internalCount();
     }
-    
+
     /**
      * Count the number of records that were created per day
-     * 
-     * @param number $days The number of previous days to count when counting the number of created records per day.
+     *
+     * @param number $days
+     *            The number of previous days to count when counting the number of created records per day.
      * @return \Illuminate\Http\Response
      */
     public function countCreatedPerDayForDaysAgo($days)
@@ -90,7 +91,7 @@ abstract class ApiController extends Controller
      *            The ID of the record to update.
      * @return \Illuminate\Http\Response
      */
-    public function update($id)
+    public function edit($id)
     {
         return $this->internalUpdate($id, $this->request->input());
     }
@@ -107,56 +108,70 @@ abstract class ApiController extends Controller
         $this->service->delete($id);
         return $this->ok();
     }
-    
+
     /**
      * Count the number of results in the controller's service's repository.
-     * 
-     * @param array $where Extra WHERE parameters to add to the query.
+     *
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
      * @return \Illuminate\Http\Response
      */
     protected function internalCount(array $where = [])
     {
-        return $this->ok(['count' => $this->service->count($where)]);
+        return $this->ok([
+            'count' => $this->service->count($where)
+        ]);
     }
-    
+
     /**
      * Count the number of records that were created per day
-     * 
-     * @param number $days The number of previous days to count when counting the number of created records per day.
-     * @param array $where Extra where parameters to add to the query.
+     *
+     * @param number $days
+     *            The number of previous days to count when counting the number of created records per day.
+     * @param array $where
+     *            Extra where parameters to add to the query.
      * @return \Illuminate\Http\Response
      */
     protected function internalCountCreatedPerDayForDaysAgo($days, array $where = [])
     {
-        return $this->ok($this->service->countCreatedPerDayForDaysAgo($days, $where)->toArray());
+        return $this->ok($this->service->countCreatedPerDayForDaysAgo($days, $where)
+            ->toArray());
     }
 
     /**
      * Sum a column's value for each day for the given number of days ago.
-     *  
-     * @param string $column The column to sum the values for.
-     * @param number $days The number of previous days to count when counting the number of records per day.
-     * @param array $where Extra WHERE parameters to add to the query.
+     *
+     * @param string $column
+     *            The column to sum the values for.
+     * @param number $days
+     *            The number of previous days to count when counting the number of records per day.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
      * @return \Illuminate\Http\Response
      */
     protected function internalSumPerDayForDaysAgo($column, $days, array $where = [])
     {
-        return $this->ok($this->service->sumPerDayForDaysAgo($column, $days, $where)->toArray());
+        return $this->ok($this->service->sumPerDayForDaysAgo($column, $days, $where)
+            ->toArray());
     }
-    
+
     /**
      * Sum a column's value for each hour for the given number of hours ago.
-     * 
-     * @param string $column The column to sum the values for.
-     * @param number $hours The number of previous hours to count when summing the columns value per hour.
-     * @param array $where Extra WHERE parameters to add to the query.
+     *
+     * @param string $column
+     *            The column to sum the values for.
+     * @param number $hours
+     *            The number of previous hours to count when summing the columns value per hour.
+     * @param array $where
+     *            Extra WHERE parameters to add to the query.
      * @return \Illuminate\Http\Response
      */
     protected function internalSumPerHourForHoursAgo($column, $hours, array $where = [])
     {
-        return $this->ok($this->service->sumPerHourForHoursAgo($column, $hours, $where)->toArray());
+        return $this->ok($this->service->sumPerHourForHoursAgo($column, $hours, $where)
+            ->toArray());
     }
-    
+
     /**
      * Create a record using the controller's service.
      *
@@ -198,11 +213,12 @@ abstract class ApiController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Delete a record using the controller's service.
-     * 
-     * @param number $id The primary key value of the record to delete.
+     *
+     * @param number $id
+     *            The primary key value of the record to delete.
      * @return \Illuminate\Http\Response
      */
     protected function internalDelete($id)
@@ -248,9 +264,9 @@ abstract class ApiController extends Controller
      */
     protected function badRequest($message = 'Bad Request!', array $data = [])
     {
-        return $this->response_factory->json(array_merge([
+        return $this->response_factory->json(array_merge($data, [
             'message' => $message
-        ], $data), Response::HTTP_BAD_REQUEST);
+        ]), Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -266,11 +282,12 @@ abstract class ApiController extends Controller
             'message' => $message
         ], Response::HTTP_FORBIDDEN);
     }
-    
+
     /**
      * Return a Not Found JSON response.
-     * 
-     * @param string $message An error message to return with the response.
+     *
+     * @param string $message
+     *            An error message to return with the response.
      * @return \Illuminate\Http\Response
      */
     protected function notFound($message = 'Not Found!')
@@ -278,5 +295,21 @@ abstract class ApiController extends Controller
         return $this->response_factory->json([
             'message' => $message
         ], Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * Returns a Conflict JSON response.
+     *
+     * @param string $message
+     *            An error message to return with the response.
+     * @param array $data
+     *            Extra data to return with the response.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function conflict($message = 'Conflict', array $data = [])
+    {
+        return $this->response_factory->json(array_merge($data, [
+            'message' => $message
+        ]), Response::HTTP_CONFLICT);
     }
 }

@@ -85,7 +85,7 @@ abstract class ViewController extends Controller
             return $this->redirectToAction(__CLASS__ . '@showView', [$id], ['created' => $id]);
         } catch (ValidationException $e) {
             $this->request->flash();
-            return $this->view('create')->with('errors', $e->getErrors());
+            return $this->view('create', ['errors' => $e->getErrors()]);
         }
     }
 
@@ -185,4 +185,6 @@ abstract class ViewController extends Controller
     {
         return $this->response_factory->redirectToAction($action, $params)->with($data);
     }
+    
+    
 }
