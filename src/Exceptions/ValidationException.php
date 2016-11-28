@@ -31,6 +31,16 @@ class ValidationException extends \Exception
     }
     
     /**
+     * Merge the given validation errors with the existing errors.
+     * 
+     * @param array $errors The errors to merge.
+     */
+    public function mergeErrors(array $errors = [])
+    {
+        $this->errors = array_merge($this->errors, $errors);
+    }
+    
+    /**
      * Get the errors associated to the exception.
      * 
      * @return array The errors associated to the exception.

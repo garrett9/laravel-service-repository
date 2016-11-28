@@ -139,11 +139,12 @@ abstract class ViewController extends Controller
      *            The file of the view to load.
      * @param array $data
      *            The data to load with the view.
+     * @param number $code The status code to give the view.
      * @return Response
      */
-    protected function view($view, array $data = [])
+    protected function view($view, array $data = [], $code = Response::HTTP_OK)
     {
-        return $this->response_factory->view('desktop/' . $this->path . $view, $data)->setStatusCode(400);
+        return $this->response_factory->view('desktop/' . $this->path . $view, $data, $code);
     }
 
     /**
@@ -151,6 +152,7 @@ abstract class ViewController extends Controller
      *
      * @param string $path
      *            The path to redirect to.
+     * @param array $data The data to send with the redirect.
      * @return Response
      */
     protected function redirectTo($path, array $data = [])
@@ -165,6 +167,7 @@ abstract class ViewController extends Controller
      *            The route to redirect to.
      * @param array $params
      *            The params for the redirection.
+     * @param array $data The data to send with the redirect.
      * @return Response
      */
     protected function redirectToRoute($route, array $params = [], array $data = [])
@@ -179,12 +182,11 @@ abstract class ViewController extends Controller
      *            The action to redirect to.
      * @param array $params
      *            The params for the redirection.
+     * @param array $data The data to send with the redirect.
      * @return Response
      */
     protected function redirectToAction($action, array $params = [], array $data = [])
     {
         return $this->response_factory->redirectToAction($action, $params)->with($data);
     }
-    
-    
 }
