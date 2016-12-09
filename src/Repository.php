@@ -473,6 +473,19 @@ abstract class Repository implements IRepository
     }
 
     /**
+     * Adds attributes to the model before the model is created.
+     *
+     * @param Ardent $model The model to add attributes to for creation.
+     * @param array $data The data to add to the model.
+     * return Ardent The given model.
+     */
+    protected function addAttributesForCreate(Ardent $model, array $data = [])
+    {
+        $model->safeFill($data);
+        return $model;
+    }
+    
+    /**
      *
      * {@inheritDoc}
      *
@@ -481,6 +494,27 @@ abstract class Repository implements IRepository
     public function create(array $data = [])
     {
         return $this->internalCreate($data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IRepository::createMultiple()
+     */
+    public function createMultiple(array $data = [])
+    {
+        $insert = [];
+        foreach($data as $item) {
+            $model = $this->addAttributesForCreate($this->model->newInstance(), $item);
+            if(!$model->validate())
+                throw new ValidationException('Failed to create the records.', $model->errors()->toArray());
+            if($model->timestamps) {
+               $now = new Carbon();
+               $model['created_at'] = $now;
+               $model['updated_at'] = $now;
+            }
+            $insert[] = $model->getAttributes();
+        }
+        return $this->insert($insert);
     }
 
     /**
@@ -612,7 +646,7 @@ abstract class Repository implements IRepository
      */
     protected function internalCreate(array $data = [], \Closure $closure = null)
     {
-        $model = $this->model->newInstance()->safeFill($data);
+        $model = $this->addAttributesForCreate($this->model->newInstance(), $data);
         if (! is_null($closure))
             $closure($model);
         try {

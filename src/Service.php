@@ -328,6 +328,16 @@ abstract class Service implements IService
     }
 
     /**
+     * 
+     * {@inheritDoc}
+     * @see \Garrett9\LaravelServiceRepository\Contracts\IService::createMultiple()
+     */
+    public function createMultiple(array $data = [])
+    {
+        return $this->repository->createMultiple($data);
+    }
+    
+    /**
      *
      * {@inheritDoc}
      *

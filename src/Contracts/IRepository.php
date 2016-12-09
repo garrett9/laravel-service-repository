@@ -370,6 +370,16 @@ interface IRepository
     public function create(array $data = []);
 
     /**
+     * Creates multiple records through an INSERT statement.
+     * However, unlike the insert method, this method will validate all data and apply timestamps to each record. If one record fails validation, then the insert statement will not run.
+     *
+     * @param array $data The records to create.
+     * @return number The number of records created.
+     * @throws \Garrett9\LaravelServiceRepository\Exceptions\ValidationException If one of the records failed validation.
+     */
+    public function createMultiple(array $data = []);
+
+    /**
      * Insert 1 or multiple records into the repository's database.
      * WARNING: This method does not utilize model validation, so be careful when using.
      *
