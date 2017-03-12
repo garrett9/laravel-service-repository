@@ -46,7 +46,7 @@ abstract class Repository implements IRepository
      */
     public function count(array $where = [])
     {
-        return $this->model->where($where)->count();
+        return $this->buildGetQuery($where)->count();
     }
 
     /**
@@ -166,7 +166,7 @@ abstract class Repository implements IRepository
     {
         return $this->buildGetQuery($where, $with, 0, $order_by, $order_dir)
             ->where($column, $operator, $value)
-            ->paginate($per_page);
+            ->paginate($per_page, ['*'], $this->model->getTable() . 'Page');
     }
 
     /**
